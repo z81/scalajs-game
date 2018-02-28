@@ -16,36 +16,92 @@ class Renderer {
   canvas.height = window.innerHeight.toInt
   document.body.appendChild(canvas)
 
+
   val mainTextures = new ImageMap("assets/images/pack1.png", gridSize)
   val grass = mainTextures getTexture(3, 0)
   val brick = mainTextures getTexture(6, 0)
+  val rock = mainTextures getTexture(5, 1)
+  val cursorHoverTexture = mainTextures getTexture(3, 42)
   val playerTexture = mainTextures getTexture(0, 17)
+  val player2Texture = mainTextures getTexture(0, 18)
 
-  var player = new Player(5, 5)
-
-
-  val map = List(
-    List(brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, brick, brick, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, brick, brick, grass, grass, grass, grass, brick, grass, grass, grass, brick, brick, brick, brick, brick, brick),
-    List(brick, grass, grass, brick, grass, grass, brick, brick, brick, brick, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, brick, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-    List(brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick)
+  var player = new Player(
+    xPos = 5,
+    yPos = 5,
+    maxVisibleRadius = 70,
+    name = "Sawaxon",
+    texture = playerTexture
   )
 
-  val impassableBlocks = List(brick)
+  var players = List(player,  new Player(
+    xPos = 7,
+    yPos = 5,
+    maxVisibleRadius = 70,
+    name = "Gleb",
+    texture = player2Texture
+  ))
 
 
+//  val map = List(
+//    List(rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, brick, brick, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, brick, brick, grass, grass, grass, grass, brick, grass, grass, grass, brick, brick, brick, brick, brick, brick),
+//    List(rock, grass, grass, brick, grass, grass, brick, brick, brick, brick, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, brick, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, rock, rock, grass, grass, grass, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, grass, grass, grass, grass, rock, rock, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
+//    List(rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock)
+//  )
+  val gameMap = new GameMap(List(
+    List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
+    List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+  ), Seq(
+    brick,
+    grass,
+    rock
+  ))
+
+  val map = gameMap.texturedMap
+  val mapHeight = map.size
+  var mapWidth = map(0).size
+
+  val impassableBlocks = List(brick, rock)
+  val warFog = new WarFog(gridSize, impassableBlocks)
+  var userUi = new UserBar(player, gameMap)
+
+  var mousePosX = 0
+  var mousePosY = 0
+
+
+  canvas.width = mapWidth * gridSize
+  canvas.height = mapHeight * gridSize
   initKeyboard()
 
   js.timers.setInterval(50) {
@@ -58,9 +114,9 @@ class Renderer {
 
 
       var y = 0
-      for(row <- map) {
+      for (row <- map) {
         var x = 0
-        for(texture <- row) {
+        for (texture <- row) {
           if (texture != grass) grass.draw(ctx, gridSize * x, gridSize * y)
           texture.draw(ctx, gridSize * x, gridSize * y)
 
@@ -70,59 +126,15 @@ class Renderer {
       }
 
 
-      playerTexture.draw(ctx, gridSize * player.x, gridSize * player.y)
 
-
-
-      var radius = 701
-
-      // Не хейтить, потом вынесу в другое место!!!111
-//      ctx.beginPath()
-//      ctx.rect(0, 0, map(0).size * gridSize, player.y * (gridSize + 1) - radius)
-//      ctx.rect(0, player.y * gridSize + radius, map(0).size * gridSize, map.size * gridSize)
-//      ctx.fill()
-
-
-//      ctx.save()
-//      ctx.beginPath
-//      ctx.globalCompositeOperation = "source-over"
-//      ctx.rect(0, 0, map(0).size * gridSize, map.size * gridSize)
-//      ctx.globalCompositeOperation = "destination-out"
-//      ctx.arc(player.x * gridSize, player.y * gridSize, radius, 0, Math.PI * 2)
-//      ctx.fill()
-//      ctx.restore()
-      // ctx.fillRect(0, 0, map(0).size * gridSize, map.size * gridSize)
-
-
-      for (angle <- 0 until 360 by 1) {
-        var rad = angle * Math.PI / 180
-        var isNotVisiable = false
-
-        for (r <- 0 until radius by gridSize) {
-          var x = gridSize * player.x
-          var y = gridSize * player.y
-          var endX = x + sin(angle) * r
-          var endY = y + cos(angle) * r
-
-          var mapX = round(endX / gridSize).toInt
-          var mapY = round(endY / gridSize).toInt
-
-          if (mapX < 0) mapX = 0
-          if (mapY < 0) mapY = 0
-          if (mapX > map(0).size - 1) mapX = map(0).size - 1
-          if (mapY > map.size - 1) mapY = map.size - 1
-
-          if (impassableBlocks.contains(map(mapY)(mapX))) {
-            isNotVisiable = true
-          } else
-          if (isNotVisiable) {
-            ctx.beginPath()
-            ctx.rect(mapX * gridSize, mapY * gridSize, mapX + gridSize, mapY + gridSize)
-            ctx.fill()
-          }
-
-        }
+      for(player <- players) {
+        player.render(ctx, gridSize)
       }
+      warFog.render(ctx, player, map)
+
+      userUi.render(ctx, gridSize)
+
+      //cursorHoverTexture.draw(ctx, mousePosX * gridSize, mousePosY * gridSize)
     }
   }
 
@@ -134,20 +146,31 @@ class Renderer {
   def initKeyboard(): Unit = {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
 
-      if(e.keyCode == KeyCode.Left && isValidPlayerPosition(-1, 0)) {
-        player.x -= 1
+      if((e.keyCode == KeyCode.Left || e.keyCode ==  KeyCode.A) && isValidPlayerPosition(-1, 0)) {
+        player.move(-1, 0)
       }
 
-      if(e.keyCode == KeyCode.Right && isValidPlayerPosition(1, 0)) {
-        player.x += 1
+      if((e.keyCode == KeyCode.Right || e.keyCode ==  KeyCode.D) && isValidPlayerPosition(1, 0)) {
+        player.move(1, 0)
       }
 
-      if(e.keyCode == KeyCode.Up && isValidPlayerPosition(0, -1)) {
-        player.y -= 1
+      if((e.keyCode == KeyCode.Up || e.keyCode ==  KeyCode.W) && isValidPlayerPosition(0, -1)) {
+        player.move(0, -1)
       }
 
-      if(e.keyCode == KeyCode.Down && isValidPlayerPosition(0, 1)) {
-        player.y += 1
+      if((e.keyCode == KeyCode.Down || e.keyCode ==  KeyCode.S) && isValidPlayerPosition(0, 1)) {
+        player.move(0, 1)
+      }
+    }, false)
+
+
+    document.body.addEventListener("click", (e: MouseEvent) => {
+      var x = round(e.clientX / gridSize).toInt
+      var y = round(e.clientY / gridSize).toInt
+
+      if (abs(mousePosX - x) < 5 && abs(mousePosY - y) < 5) {
+        mousePosY = y
+        mousePosX = x
       }
     }, false)
   }

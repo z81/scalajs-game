@@ -1157,6 +1157,48 @@ var $d_Lgame_Game = new $TypeData().initClass({
 });
 $c_Lgame_Game.prototype.$classData = $d_Lgame_Game;
 /** @constructor */
+function $c_Lgame_GameMap() {
+  $c_O.call(this);
+  this.textures$1 = null;
+  this.texturedMap$1 = null
+}
+$c_Lgame_GameMap.prototype = new $h_O();
+$c_Lgame_GameMap.prototype.constructor = $c_Lgame_GameMap;
+/** @constructor */
+function $h_Lgame_GameMap() {
+  /*<skip>*/
+}
+$h_Lgame_GameMap.prototype = $c_Lgame_GameMap.prototype;
+$c_Lgame_GameMap.prototype.init___sc_Seq__sc_Seq = (function(map, textures) {
+  this.textures$1 = textures;
+  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
+    return (function(x$1$2) {
+      var x$1 = $as_sc_Seq(x$1$2);
+      var jsx$2 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this$1) {
+        return (function(x$2$2) {
+          var x$2 = $uI(x$2$2);
+          return $as_Lgame_ImageRegion($this$1.textures$1.apply__I__O(x$2))
+        })
+      })($this));
+      var this$1 = $m_sc_Seq$();
+      return $as_sc_Seq(x$1.map__F1__scg_CanBuildFrom__O(jsx$2, this$1.ReusableCBFInstance$2))
+    })
+  })(this));
+  var this$2 = $m_sc_Seq$();
+  this.texturedMap$1 = $as_sc_Seq(map.map__F1__scg_CanBuildFrom__O(jsx$1, this$2.ReusableCBFInstance$2));
+  return this
+});
+$c_Lgame_GameMap.prototype.width__I = (function() {
+  return $as_sc_SeqLike(this.texturedMap$1.apply__I__O(0)).size__I()
+});
+var $d_Lgame_GameMap = new $TypeData().initClass({
+  Lgame_GameMap: 0
+}, false, "game.GameMap", {
+  Lgame_GameMap: 1,
+  O: 1
+});
+$c_Lgame_GameMap.prototype.$classData = $d_Lgame_GameMap;
+/** @constructor */
 function $c_Lgame_Image() {
   $c_O.call(this);
   this.ready$1 = false;
@@ -1264,8 +1306,15 @@ $c_Lgame_ImageRegion.prototype.$classData = $d_Lgame_ImageRegion;
 /** @constructor */
 function $c_Lgame_Player() {
   $c_O.call(this);
+  this.texture$1 = null;
   this.x$1 = 0;
-  this.y$1 = 0
+  this.y$1 = 0;
+  this.hp$1 = 0;
+  this.armor$1 = 0;
+  this.stamina$1 = 0;
+  this.visibleRadius$1 = 0;
+  this.username$1 = null;
+  this.direction$1 = null
 }
 $c_Lgame_Player.prototype = new $h_O();
 $c_Lgame_Player.prototype.constructor = $c_Lgame_Player;
@@ -1274,11 +1323,56 @@ function $h_Lgame_Player() {
   /*<skip>*/
 }
 $h_Lgame_Player.prototype = $c_Lgame_Player.prototype;
-$c_Lgame_Player.prototype.init___I__I = (function(xPos, yPos) {
+$c_Lgame_Player.prototype.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__V = (function(ctx, gridSize) {
+  var textSize = ctx.measureText(this.username$1);
+  var textXPosition = (((($imul(gridSize, this.x$1) - (($doubleToInt($uD(textSize.width)) / 2) | 0)) | 0) + ((gridSize / 2) | 0)) | 0);
+  ctx.fillStyle = "rgb(230, 230, 230)";
+  ctx.fillText(this.username$1, (((-1) + textXPosition) | 0), (((-1) + (($imul(gridSize, this.y$1) - ((gridSize / 4) | 0)) | 0)) | 0));
+  ctx.fillText(this.username$1, ((1 + textXPosition) | 0), ((1 + (($imul(gridSize, this.y$1) - ((gridSize / 4) | 0)) | 0)) | 0));
+  ctx.fillStyle = "black";
+  ctx.fillText(this.username$1, textXPosition, (($imul(gridSize, this.y$1) - ((gridSize / 4) | 0)) | 0));
+  this.texture$1.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V(ctx, $imul(gridSize, this.x$1), $imul(gridSize, this.y$1))
+});
+$c_Lgame_Player.prototype.init___I__I__I__T__Lgame_ImageRegion = (function(xPos, yPos, maxVisibleRadius, name, texture) {
+  this.texture$1 = texture;
   this.x$1 = xPos;
   this.y$1 = yPos;
+  this.hp$1 = 100;
+  this.armor$1 = 100;
+  this.stamina$1 = 100;
+  this.visibleRadius$1 = maxVisibleRadius;
+  this.username$1 = name;
+  this.direction$1 = "right";
+  $m_sjs_js_timers_package$().setInterval__D__F0__sjs_js_timers_SetIntervalHandle(100.0, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function($this) {
+    return (function() {
+      if (($this.stamina$1 < 100)) {
+        $this.stamina$1 = ((1 + $this.stamina$1) | 0)
+      }
+    })
+  })(this)));
   return this
 });
+$c_Lgame_Player.prototype.move__I__I__V = (function(cx, cy) {
+  if ((this.stamina$1 < 20)) {
+    return (void 0)
+  };
+  this.x$1 = ((this.x$1 + cx) | 0);
+  this.y$1 = ((this.y$1 + cy) | 0);
+  var a = (((-20) + this.stamina$1) | 0);
+  this.stamina$1 = ((a > 0) ? a : 0)
+});
+function $is_Lgame_Player(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lgame_Player)))
+}
+function $as_Lgame_Player(obj) {
+  return (($is_Lgame_Player(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "game.Player"))
+}
+function $isArrayOf_Lgame_Player(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lgame_Player)))
+}
+function $asArrayOf_Lgame_Player(obj, depth) {
+  return (($isArrayOf_Lgame_Player(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lgame.Player;", depth))
+}
 var $d_Lgame_Player = new $TypeData().initClass({
   Lgame_Player: 0
 }, false, "game.Player", {
@@ -1295,10 +1389,21 @@ function $c_Lgame_Renderer() {
   this.mainTextures$1 = null;
   this.grass$1 = null;
   this.brick$1 = null;
+  this.rock$1 = null;
+  this.cursorHoverTexture$1 = null;
   this.playerTexture$1 = null;
+  this.player2Texture$1 = null;
   this.player$1 = null;
+  this.players$1 = null;
+  this.gameMap$1 = null;
   this.map$1 = null;
-  this.impassableBlocks$1 = null
+  this.mapHeight$1 = 0;
+  this.mapWidth$1 = 0;
+  this.impassableBlocks$1 = null;
+  this.warFog$1 = null;
+  this.userUi$1 = null;
+  this.mousePosX$1 = 0;
+  this.mousePosY$1 = 0
 }
 $c_Lgame_Renderer.prototype = new $h_O();
 $c_Lgame_Renderer.prototype.constructor = $c_Lgame_Renderer;
@@ -1318,97 +1423,139 @@ $c_Lgame_Renderer.prototype.init___ = (function() {
   this.mainTextures$1 = new $c_Lgame_ImageMap().init___T__I("assets/images/pack1.png", this.gridSize$1);
   this.grass$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(3, 0);
   this.brick$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(6, 0);
+  this.rock$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(5, 1);
+  this.cursorHoverTexture$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(3, 42);
   this.playerTexture$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(0, 17);
-  this.player$1 = new $c_Lgame_Player().init___I__I(5, 5);
+  this.player2Texture$1 = this.mainTextures$1.getTexture__I__I__Lgame_ImageRegion(0, 18);
+  this.player$1 = new $c_Lgame_Player().init___I__I__I__T__Lgame_ImageRegion(5, 5, 70, "Sawaxon", this.playerTexture$1);
   $m_sci_List$();
-  $m_sci_List$();
-  var xs = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1]);
+  var xs = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.player$1, new $c_Lgame_Player().init___I__I__I__T__Lgame_ImageRegion(7, 5, 70, "Gleb", this.player2Texture$1)]);
   var this$2 = $m_sci_List$();
   var cbf = this$2.ReusableCBFInstance$2;
-  var jsx$15 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs, cbf));
+  this.players$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs, cbf));
   $m_sci_List$();
-  var xs$1 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  $m_sci_List$();
+  var xs$1 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
   var this$4 = $m_sci_List$();
   var cbf$1 = this$4.ReusableCBFInstance$2;
-  var jsx$14 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$1, cbf$1));
+  var jsx$20 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$1, cbf$1));
   $m_sci_List$();
-  var xs$2 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$2 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$6 = $m_sci_List$();
   var cbf$2 = this$6.ReusableCBFInstance$2;
-  var jsx$13 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$2, cbf$2));
+  var jsx$19 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$2, cbf$2));
   $m_sci_List$();
-  var xs$3 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$3 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$8 = $m_sci_List$();
   var cbf$3 = this$8.ReusableCBFInstance$2;
-  var jsx$12 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$3, cbf$3));
+  var jsx$18 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$3, cbf$3));
   $m_sci_List$();
-  var xs$4 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$4 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$10 = $m_sci_List$();
   var cbf$4 = this$10.ReusableCBFInstance$2;
-  var jsx$11 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$4, cbf$4));
+  var jsx$17 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$4, cbf$4));
   $m_sci_List$();
-  var xs$5 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.brick$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$5 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$12 = $m_sci_List$();
   var cbf$5 = this$12.ReusableCBFInstance$2;
-  var jsx$10 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$5, cbf$5));
+  var jsx$16 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$5, cbf$5));
   $m_sci_List$();
-  var xs$6 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.brick$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1]);
+  var xs$6 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$14 = $m_sci_List$();
   var cbf$6 = this$14.ReusableCBFInstance$2;
-  var jsx$9 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$6, cbf$6));
+  var jsx$15 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$6, cbf$6));
   $m_sci_List$();
-  var xs$7 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$7 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$16 = $m_sci_List$();
   var cbf$7 = this$16.ReusableCBFInstance$2;
-  var jsx$8 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$7, cbf$7));
+  var jsx$14 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$7, cbf$7));
   $m_sci_List$();
-  var xs$8 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.brick$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$8 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$18 = $m_sci_List$();
   var cbf$8 = this$18.ReusableCBFInstance$2;
-  var jsx$7 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$8, cbf$8));
+  var jsx$13 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$8, cbf$8));
   $m_sci_List$();
-  var xs$9 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$9 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$20 = $m_sci_List$();
   var cbf$9 = this$20.ReusableCBFInstance$2;
-  var jsx$6 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$9, cbf$9));
+  var jsx$12 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$9, cbf$9));
   $m_sci_List$();
-  var xs$10 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$10 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$22 = $m_sci_List$();
   var cbf$10 = this$22.ReusableCBFInstance$2;
-  var jsx$5 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$10, cbf$10));
+  var jsx$11 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$10, cbf$10));
   $m_sci_List$();
-  var xs$11 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$11 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$24 = $m_sci_List$();
   var cbf$11 = this$24.ReusableCBFInstance$2;
-  var jsx$4 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$11, cbf$11));
+  var jsx$10 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$11, cbf$11));
   $m_sci_List$();
-  var xs$12 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$12 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$26 = $m_sci_List$();
   var cbf$12 = this$26.ReusableCBFInstance$2;
-  var jsx$3 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$12, cbf$12));
+  var jsx$9 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$12, cbf$12));
   $m_sci_List$();
-  var xs$13 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$13 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$28 = $m_sci_List$();
   var cbf$13 = this$28.ReusableCBFInstance$2;
-  var jsx$2 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$13, cbf$13));
+  var jsx$8 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$13, cbf$13));
   $m_sci_List$();
-  var xs$14 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1, this.grass$1, this.grass$1, this.grass$1, this.grass$1, this.brick$1]);
+  var xs$14 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$30 = $m_sci_List$();
   var cbf$14 = this$30.ReusableCBFInstance$2;
-  var jsx$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$14, cbf$14));
+  var jsx$7 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$14, cbf$14));
   $m_sci_List$();
-  var xs$15 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1, this.brick$1]);
+  var xs$15 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$32 = $m_sci_List$();
   var cbf$15 = this$32.ReusableCBFInstance$2;
-  var xs$16 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([jsx$15, jsx$14, jsx$13, jsx$12, jsx$11, jsx$10, jsx$9, jsx$8, jsx$7, jsx$6, jsx$5, jsx$4, jsx$3, jsx$2, jsx$1, $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$15, cbf$15))]);
+  var jsx$6 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$15, cbf$15));
+  $m_sci_List$();
+  var xs$16 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$34 = $m_sci_List$();
   var cbf$16 = this$34.ReusableCBFInstance$2;
-  this.map$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$16, cbf$16));
+  var jsx$5 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$16, cbf$16));
   $m_sci_List$();
-  var xs$17 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1]);
+  var xs$17 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
   var this$36 = $m_sci_List$();
   var cbf$17 = this$36.ReusableCBFInstance$2;
-  this.impassableBlocks$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$17, cbf$17));
+  var jsx$4 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$17, cbf$17));
+  $m_sci_List$();
+  var xs$18 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
+  var this$38 = $m_sci_List$();
+  var cbf$18 = this$38.ReusableCBFInstance$2;
+  var jsx$3 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$18, cbf$18));
+  $m_sci_List$();
+  var xs$19 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
+  var this$40 = $m_sci_List$();
+  var cbf$19 = this$40.ReusableCBFInstance$2;
+  var jsx$2 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$19, cbf$19));
+  $m_sci_List$();
+  var xs$20 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]);
+  var this$42 = $m_sci_List$();
+  var cbf$20 = this$42.ReusableCBFInstance$2;
+  var jsx$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$20, cbf$20));
+  $m_sci_List$();
+  var xs$21 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+  var this$44 = $m_sci_List$();
+  var cbf$21 = this$44.ReusableCBFInstance$2;
+  var xs$22 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([jsx$20, jsx$19, jsx$18, jsx$17, jsx$16, jsx$15, jsx$14, jsx$13, jsx$12, jsx$11, jsx$10, jsx$9, jsx$8, jsx$7, jsx$6, jsx$5, jsx$4, jsx$3, jsx$2, jsx$1, $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$21, cbf$21))]);
+  var this$46 = $m_sci_List$();
+  var cbf$22 = this$46.ReusableCBFInstance$2;
+  this.gameMap$1 = new $c_Lgame_GameMap().init___sc_Seq__sc_Seq($as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$22, cbf$22)), $as_sc_Seq($m_sc_Seq$().apply__sc_Seq__sc_GenTraversable(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.grass$1, this.rock$1]))));
+  this.map$1 = this.gameMap$1.texturedMap$1;
+  this.mapHeight$1 = this.map$1.size__I();
+  this.mapWidth$1 = $as_sc_SeqLike(this.map$1.apply__I__O(0)).size__I();
+  $m_sci_List$();
+  var xs$23 = new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.brick$1, this.rock$1]);
+  var this$48 = $m_sci_List$();
+  var cbf$23 = this$48.ReusableCBFInstance$2;
+  this.impassableBlocks$1 = $as_sci_List($f_sc_TraversableLike__to__scg_CanBuildFrom__O(xs$23, cbf$23));
+  this.warFog$1 = new $c_Lgame_WarFog().init___I__sc_Seq(this.gridSize$1, this.impassableBlocks$1);
+  this.userUi$1 = new $c_Lgame_UserBar().init___Lgame_Player__Lgame_GameMap(this.player$1, this.gameMap$1);
+  this.mousePosX$1 = 0;
+  this.mousePosY$1 = 0;
+  this.canvas$1.width = $imul(this.mapWidth$1, this.gridSize$1);
+  this.canvas$1.height = $imul(this.mapHeight$1, this.gridSize$1);
   this.initKeyboard__V();
   $m_sjs_js_timers_package$().setInterval__D__F0__sjs_js_timers_SetIntervalHandle(50.0, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function($this) {
     return (function() {
@@ -1422,174 +1569,89 @@ $c_Lgame_Renderer.prototype.initKeyboard__V = (function() {
     return (function(arg1$2) {
       return arg$outer.game$Renderer$$$anonfun$initKeyboard$1__Lorg_scalajs_dom_raw_KeyboardEvent__O(arg1$2)
     })
+  })(this), false);
+  $m_Lorg_scalajs_dom_package$().document__Lorg_scalajs_dom_raw_HTMLDocument().body.addEventListener("click", (function(arg$outer$1) {
+    return (function(arg1$2$1) {
+      return arg$outer$1.game$Renderer$$$anonfun$initKeyboard$2__Lorg_scalajs_dom_raw_MouseEvent__O(arg1$2$1)
+    })
   })(this), false)
 });
+$c_Lgame_Renderer.prototype.game$Renderer$$$anonfun$initKeyboard$2__Lorg_scalajs_dom_raw_MouseEvent__O = (function(e) {
+  var x = ($uD(e.clientX) / this.gridSize$1);
+  var this$3 = $m_sjsr_RuntimeLong$();
+  var value = $uD($g.Math.round(x));
+  var lo = this$3.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value);
+  var x$1 = ($uD(e.clientY) / this.gridSize$1);
+  var this$6 = $m_sjsr_RuntimeLong$();
+  var value$1 = $uD($g.Math.round(x$1));
+  var lo$1 = this$6.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$1);
+  var x$2 = ((this.mousePosX$1 - lo) | 0);
+  if ((((x$2 < 0) ? ((-x$2) | 0) : x$2) < 5)) {
+    var x$3 = ((this.mousePosY$1 - lo$1) | 0);
+    var jsx$1 = (((x$3 < 0) ? ((-x$3) | 0) : x$3) < 5)
+  } else {
+    var jsx$1 = false
+  };
+  if (jsx$1) {
+    this.mousePosY$1 = lo$1;
+    this.mousePosX$1 = lo;
+    return (void 0)
+  } else {
+    return (void 0)
+  }
+});
 $c_Lgame_Renderer.prototype.isValidPlayerPosition__I__I__Z = (function(x, y) {
-  var this$3 = this.impassableBlocks$1;
-  var this$1 = this.map$1;
-  var n = ((this.player$1.y$1 + y) | 0);
-  var this$2 = $as_sc_LinearSeqOptimized($f_sc_LinearSeqOptimized__apply__I__O(this$1, n));
-  var n$1 = ((this.player$1.x$1 + x) | 0);
-  var elem = $f_sc_LinearSeqOptimized__apply__I__O(this$2, n$1);
-  return (!$f_sc_LinearSeqOptimized__contains__O__Z(this$3, elem))
+  var this$1 = this.impassableBlocks$1;
+  var elem = $as_sc_SeqLike(this.map$1.apply__I__O(((this.player$1.y$1 + y) | 0))).apply__I__O(((this.player$1.x$1 + x) | 0));
+  return (!$f_sc_LinearSeqOptimized__contains__O__Z(this$1, elem))
 });
 $c_Lgame_Renderer.prototype.render__V = (function() {
   var this$1 = this.mainTextures$1;
   var this$2 = this$1.image$1;
   if (this$2.ready$1) {
-    var elem$1 = 0;
-    elem$1 = 0;
-    var this$4 = this.map$1;
-    var these = this$4;
+    var y = new $c_sr_IntRef().init___I(0);
+    this.map$1.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, y$1) {
+      return (function(row$2) {
+        var row = $as_sc_Seq(row$2);
+        var x = new $c_sr_IntRef().init___I(0);
+        row.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this$1, y$1$1, x$1) {
+          return (function(texture$2) {
+            var texture = $as_Lgame_ImageRegion(texture$2);
+            var x$2 = $this$1.grass$1;
+            if ((!(texture === x$2))) {
+              $this$1.grass$1.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V($this$1.ctx$1, $imul($this$1.gridSize$1, x$1.elem$1), $imul($this$1.gridSize$1, y$1$1.elem$1))
+            };
+            texture.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V($this$1.ctx$1, $imul($this$1.gridSize$1, x$1.elem$1), $imul($this$1.gridSize$1, y$1$1.elem$1));
+            x$1.elem$1 = ((1 + x$1.elem$1) | 0)
+          })
+        })($this, y$1, x)));
+        y$1.elem$1 = ((1 + y$1.elem$1) | 0)
+      })
+    })(this, y)));
+    var this$5 = this.players$1;
+    var these = this$5;
     while ((!these.isEmpty__Z())) {
       var arg1 = these.head__O();
-      var row = $as_sci_List(arg1);
-      var elem$1$1 = 0;
-      elem$1$1 = 0;
-      var these$1 = row;
-      while ((!these$1.isEmpty__Z())) {
-        var arg1$1 = these$1.head__O();
-        var texture = $as_Lgame_ImageRegion(arg1$1);
-        var x$2 = this.grass$1;
-        if ((!(texture === x$2))) {
-          this.grass$1.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V(this.ctx$1, $imul(this.gridSize$1, elem$1$1), $imul(this.gridSize$1, elem$1))
-        };
-        texture.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V(this.ctx$1, $imul(this.gridSize$1, elem$1$1), $imul(this.gridSize$1, elem$1));
-        elem$1$1 = ((1 + elem$1$1) | 0);
-        var this$6 = these$1;
-        these$1 = this$6.tail__sci_List()
-      };
-      elem$1 = ((1 + elem$1) | 0);
-      var this$7 = these;
-      these = this$7.tail__sci_List()
+      var player = $as_Lgame_Player(arg1);
+      player.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__V(this.ctx$1, this.gridSize$1);
+      var this$6 = these;
+      these = this$6.tail__sci_List()
     };
-    this.playerTexture$1.draw__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__I__V(this.ctx$1, $imul(this.gridSize$1, this.player$1.x$1), $imul(this.gridSize$1, this.player$1.y$1));
-    var elem$1$2 = 0;
-    elem$1$2 = 701;
-    var i = 0;
-    while (true) {
-      var v1 = i;
-      var elem$1$3 = false;
-      elem$1$3 = false;
-      var end = elem$1$2;
-      var isEmpty$4 = (end <= 0);
-      var step = this.gridSize$1;
-      var isEmpty$4$1 = ((((end < 0) && (step > 0)) || ((end > 0) && (step < 0))) || (end === 0));
-      if ((step === 0)) {
-        throw new $c_jl_IllegalArgumentException().init___T("step cannot be 0.")
-      };
-      if (isEmpty$4$1) {
-        /*<skip>*/
-      } else {
-        var hi$2 = (end >> 31);
-        var hi$3 = (step >> 31);
-        var this$16 = $m_sjsr_RuntimeLong$();
-        var lo = this$16.divideImpl__I__I__I__I__I(end, hi$2, step, hi$3);
-        var hi$4 = this$16.scala$scalajs$runtime$RuntimeLong$$hiReturn$f;
-        var hi$5 = (end >> 31);
-        var hi$6 = (step >> 31);
-        var this$17 = $m_sjsr_RuntimeLong$();
-        this$17.remainderImpl__I__I__I__I__I(end, hi$5, step, hi$6)
-      };
-      switch (step) {
-        case 1: {
-          var scala$collection$immutable$Range$$lastElement$4$1 = (((-1) + end) | 0);
-          break
-        }
-        case (-1): {
-          var scala$collection$immutable$Range$$lastElement$4$1 = ((1 + end) | 0);
-          break
-        }
-        default: {
-          var hi$10 = (end >> 31);
-          var hi$11 = (step >> 31);
-          var this$19 = $m_sjsr_RuntimeLong$();
-          var lo$3 = this$19.remainderImpl__I__I__I__I__I(end, hi$10, step, hi$11);
-          var scala$collection$immutable$Range$$lastElement$4$1 = ((lo$3 !== 0) ? ((end - lo$3) | 0) : ((end - step) | 0))
-        }
-      };
-      if ((!isEmpty$4$1)) {
-        var i$1 = 0;
-        while (true) {
-          var v1$1 = i$1;
-          var x = $imul(this.gridSize$1, this.player$1.x$1);
-          var y = $imul(this.gridSize$1, this.player$1.y$1);
-          var endX = (x + ($uD($g.Math.sin(v1)) * v1$1));
-          var endY = (y + ($uD($g.Math.cos(v1)) * v1$1));
-          var x$1 = (endX / this.gridSize$1);
-          var this$26 = $m_sjsr_RuntimeLong$();
-          var value$1 = $uD($g.Math.round(x$1));
-          var lo$4 = this$26.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$1);
-          var mapX = lo$4;
-          var x$3 = (endY / this.gridSize$1);
-          var this$29 = $m_sjsr_RuntimeLong$();
-          var value$2 = $uD($g.Math.round(x$3));
-          var lo$5 = this$29.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$2);
-          var mapY = lo$5;
-          if ((mapX < 0)) {
-            mapX = 0
-          };
-          if ((mapY < 0)) {
-            mapY = 0
-          };
-          var jsx$1 = mapX;
-          var this$30 = this.map$1;
-          if ((jsx$1 > (((-1) + $as_sc_SeqLike($f_sc_LinearSeqOptimized__apply__I__O(this$30, 0)).size__I()) | 0))) {
-            var this$31 = this.map$1;
-            mapX = (((-1) + $as_sc_SeqLike($f_sc_LinearSeqOptimized__apply__I__O(this$31, 0)).size__I()) | 0)
-          };
-          var jsx$2 = mapY;
-          var this$32 = this.map$1;
-          if ((jsx$2 > (((-1) + $f_sc_LinearSeqOptimized__length__I(this$32)) | 0))) {
-            var this$33 = this.map$1;
-            mapY = (((-1) + $f_sc_LinearSeqOptimized__length__I(this$33)) | 0)
-          };
-          var this$36 = this.impassableBlocks$1;
-          var this$34 = this.map$1;
-          var n = mapY;
-          var this$35 = $as_sc_LinearSeqOptimized($f_sc_LinearSeqOptimized__apply__I__O(this$34, n));
-          var n$1 = mapX;
-          var elem = $f_sc_LinearSeqOptimized__apply__I__O(this$35, n$1);
-          if ($f_sc_LinearSeqOptimized__contains__O__Z(this$36, elem)) {
-            elem$1$3 = true
-          } else if (elem$1$3) {
-            this.ctx$1.beginPath();
-            this.ctx$1.rect($imul(mapX, this.gridSize$1), $imul(mapY, this.gridSize$1), ((mapX + this.gridSize$1) | 0), ((mapY + this.gridSize$1) | 0));
-            this.ctx$1.fill()
-          };
-          if ((i$1 === scala$collection$immutable$Range$$lastElement$4$1)) {
-            break
-          };
-          i$1 = ((i$1 + step) | 0)
-        }
-      };
-      if ((i === 359)) {
-        break
-      };
-      i = ((1 + i) | 0)
-    }
+    this.warFog$1.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__Lgame_Player__sc_Seq__V(this.ctx$1, this.player$1, this.map$1);
+    this.userUi$1.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__V(this.ctx$1, this.gridSize$1)
   }
 });
 $c_Lgame_Renderer.prototype.game$Renderer$$$anonfun$initKeyboard$1__Lorg_scalajs_dom_raw_KeyboardEvent__O = (function(e) {
-  if ((($uI(e.keyCode) === 37) && this.isValidPlayerPosition__I__I__Z((-1), 0))) {
-    var ev$1 = this.player$1;
-    ev$1.x$1 = (((-1) + ev$1.x$1) | 0)
+  if (((($uI(e.keyCode) === 37) || ($uI(e.keyCode) === 65)) && this.isValidPlayerPosition__I__I__Z((-1), 0))) {
+    this.player$1.move__I__I__V((-1), 0)
   };
-  if ((($uI(e.keyCode) === 39) && this.isValidPlayerPosition__I__I__Z(1, 0))) {
-    var ev$2 = this.player$1;
-    ev$2.x$1 = ((1 + ev$2.x$1) | 0)
+  if (((($uI(e.keyCode) === 39) || ($uI(e.keyCode) === 68)) && this.isValidPlayerPosition__I__I__Z(1, 0))) {
+    this.player$1.move__I__I__V(1, 0)
   };
-  if ((($uI(e.keyCode) === 38) && this.isValidPlayerPosition__I__I__Z(0, (-1)))) {
-    var ev$3 = this.player$1;
-    ev$3.y$1 = (((-1) + ev$3.y$1) | 0)
+  if (((($uI(e.keyCode) === 38) || ($uI(e.keyCode) === 87)) && this.isValidPlayerPosition__I__I__Z(0, (-1)))) {
+    this.player$1.move__I__I__V(0, (-1))
   };
-  if ((($uI(e.keyCode) === 40) && this.isValidPlayerPosition__I__I__Z(0, 1))) {
-    var ev$4 = this.player$1;
-    ev$4.y$1 = ((1 + ev$4.y$1) | 0);
-    return (void 0)
-  } else {
-    return (void 0)
-  }
+  return (((($uI(e.keyCode) === 40) || ($uI(e.keyCode) === 83)) && this.isValidPlayerPosition__I__I__Z(0, 1)) ? (this.player$1.move__I__I__V(0, 1), (void 0)) : (void 0))
 });
 var $d_Lgame_Renderer = new $TypeData().initClass({
   Lgame_Renderer: 0
@@ -1598,6 +1660,201 @@ var $d_Lgame_Renderer = new $TypeData().initClass({
   O: 1
 });
 $c_Lgame_Renderer.prototype.$classData = $d_Lgame_Renderer;
+/** @constructor */
+function $c_Lgame_UserBar() {
+  $c_O.call(this);
+  this.player$1 = null;
+  this.map$1 = null;
+  this.uiSprite$1 = null
+}
+$c_Lgame_UserBar.prototype = new $h_O();
+$c_Lgame_UserBar.prototype.constructor = $c_Lgame_UserBar;
+/** @constructor */
+function $h_Lgame_UserBar() {
+  /*<skip>*/
+}
+$h_Lgame_UserBar.prototype = $c_Lgame_UserBar.prototype;
+$c_Lgame_UserBar.prototype.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__I__V = (function(ctx, gridSize) {
+  var jsx$2 = this.uiSprite$1.element$1;
+  var jsx$1 = this.map$1.width__I();
+  var this$1 = this.map$1;
+  ctx.drawImage(jsx$2, (((-115) + $imul(jsx$1, gridSize)) | 0), (((-80) + $imul(this$1.texturedMap$1.size__I(), gridSize)) | 0));
+  var jsx$5 = this.uiSprite$1.element$1;
+  var jsx$4 = this.player$1.hp$1;
+  var jsx$3 = this.map$1.width__I();
+  var this$2 = this.map$1;
+  ctx.drawImage(jsx$5, 120.0, 0.0, ((jsx$4 / 2) | 0), 20.0, (((-70) + $imul(jsx$3, gridSize)) | 0), (((-80) + $imul(this$2.texturedMap$1.size__I(), gridSize)) | 0), ((this.player$1.hp$1 / 2) | 0), 20.0);
+  var jsx$8 = this.uiSprite$1.element$1;
+  var jsx$7 = this.player$1.armor$1;
+  var jsx$6 = this.map$1.width__I();
+  var this$3 = this.map$1;
+  ctx.drawImage(jsx$8, 120.0, 20.0, ((jsx$7 / 2) | 0), 10.0, (((-70) + $imul(jsx$6, gridSize)) | 0), (((-60) + $imul(this$3.texturedMap$1.size__I(), gridSize)) | 0), ((this.player$1.armor$1 / 2) | 0), 10.0);
+  var jsx$11 = this.uiSprite$1.element$1;
+  var jsx$10 = this.player$1.stamina$1;
+  var jsx$9 = this.map$1.width__I();
+  var this$4 = this.map$1;
+  ctx.drawImage(jsx$11, 120.0, 30.0, ((jsx$10 / 2) | 0), 10.0, (((-70) + $imul(jsx$9, gridSize)) | 0), (((-50) + $imul(this$4.texturedMap$1.size__I(), gridSize)) | 0), ((this.player$1.stamina$1 / 2) | 0), 10.0);
+  ctx.fillStyle = "white";
+  ctx.font = "15px Open-sans";
+  var jsx$12 = this.map$1.width__I();
+  var this$6 = this.map$1;
+  ctx.fillText("1", (((-95) + $imul(jsx$12, gridSize)) | 0), (((-50) + $imul(this$6.texturedMap$1.size__I(), gridSize)) | 0));
+  ctx.font = "10px Open-sans";
+  var this$7 = this.player$1.hp$1;
+  var jsx$13 = this.map$1.width__I();
+  var this$9 = this.map$1;
+  ctx.fillText(("" + this$7), (((-95) + $imul(jsx$13, gridSize)) | 0), (((-16) + $imul(this$9.texturedMap$1.size__I(), gridSize)) | 0));
+  var this$10 = this.player$1.armor$1;
+  var jsx$14 = this.map$1.width__I();
+  var this$12 = this.map$1;
+  ctx.fillText(("" + this$10), (((-70) + $imul(jsx$14, gridSize)) | 0), (((-16) + $imul(this$12.texturedMap$1.size__I(), gridSize)) | 0));
+  var this$13 = this.player$1.stamina$1;
+  var jsx$15 = this.map$1.width__I();
+  var this$15 = this.map$1;
+  ctx.fillText(("" + this$13), (((-45) + $imul(jsx$15, gridSize)) | 0), (((-16) + $imul(this$15.texturedMap$1.size__I(), gridSize)) | 0))
+});
+$c_Lgame_UserBar.prototype.init___Lgame_Player__Lgame_GameMap = (function(player, map) {
+  this.player$1 = player;
+  this.map$1 = map;
+  this.uiSprite$1 = new $c_Lgame_Image().init___T("assets/images/ui.png");
+  return this
+});
+var $d_Lgame_UserBar = new $TypeData().initClass({
+  Lgame_UserBar: 0
+}, false, "game.UserBar", {
+  Lgame_UserBar: 1,
+  O: 1
+});
+$c_Lgame_UserBar.prototype.$classData = $d_Lgame_UserBar;
+/** @constructor */
+function $c_Lgame_WarFog() {
+  $c_O.call(this);
+  this.gridSize$1 = 0;
+  this.impassableBlocks$1 = null
+}
+$c_Lgame_WarFog.prototype = new $h_O();
+$c_Lgame_WarFog.prototype.constructor = $c_Lgame_WarFog;
+/** @constructor */
+function $h_Lgame_WarFog() {
+  /*<skip>*/
+}
+$h_Lgame_WarFog.prototype = $c_Lgame_WarFog.prototype;
+$c_Lgame_WarFog.prototype.render__Lorg_scalajs_dom_raw_CanvasRenderingContext2D__Lgame_Player__sc_Seq__V = (function(ctx, player, map) {
+  var mapHeight = map.size__I();
+  var elem = $as_sc_SeqLike(map.apply__I__O(0)).size__I();
+  var elem$1 = 0;
+  elem$1 = elem;
+  var mapPxWidth = $imul(elem$1, this.gridSize$1);
+  var mapPxHeight = $imul(mapHeight, this.gridSize$1);
+  var maxVisibleRadius = player.visibleRadius$1;
+  ctx.beginPath();
+  ctx.fillStyle = "rgb(30,30,30)";
+  ctx.rect(0.0, 0.0, mapPxWidth, (($imul(player.y$1, ((1 + this.gridSize$1) | 0)) - maxVisibleRadius) | 0));
+  ctx.rect(0.0, (($imul(player.y$1, this.gridSize$1) + maxVisibleRadius) | 0), mapPxWidth, mapPxHeight);
+  ctx.rect(0.0, 0.0, (($imul(player.x$1, ((1 + this.gridSize$1) | 0)) - maxVisibleRadius) | 0), mapPxHeight);
+  ctx.rect((($imul(player.x$1, ((1 + this.gridSize$1) | 0)) + maxVisibleRadius) | 0), 0.0, mapPxWidth, mapPxHeight);
+  var i = 0;
+  while (true) {
+    var v1 = i;
+    var elem$1$1 = false;
+    elem$1$1 = false;
+    var end = $imul(10, player.visibleRadius$1);
+    var isEmpty$4 = (end <= 0);
+    var step = this.gridSize$1;
+    var isEmpty$4$1 = ((((end < 0) && (step > 0)) || ((end > 0) && (step < 0))) || (end === 0));
+    if ((step === 0)) {
+      throw new $c_jl_IllegalArgumentException().init___T("step cannot be 0.")
+    };
+    if (isEmpty$4$1) {
+      /*<skip>*/
+    } else {
+      var hi$2 = (end >> 31);
+      var hi$3 = (step >> 31);
+      var this$10 = $m_sjsr_RuntimeLong$();
+      var lo = this$10.divideImpl__I__I__I__I__I(end, hi$2, step, hi$3);
+      var hi$4 = this$10.scala$scalajs$runtime$RuntimeLong$$hiReturn$f;
+      var hi$5 = (end >> 31);
+      var hi$6 = (step >> 31);
+      var this$11 = $m_sjsr_RuntimeLong$();
+      this$11.remainderImpl__I__I__I__I__I(end, hi$5, step, hi$6)
+    };
+    switch (step) {
+      case 1: {
+        var scala$collection$immutable$Range$$lastElement$4$1 = (((-1) + end) | 0);
+        break
+      }
+      case (-1): {
+        var scala$collection$immutable$Range$$lastElement$4$1 = ((1 + end) | 0);
+        break
+      }
+      default: {
+        var hi$10 = (end >> 31);
+        var hi$11 = (step >> 31);
+        var this$13 = $m_sjsr_RuntimeLong$();
+        var lo$3 = this$13.remainderImpl__I__I__I__I__I(end, hi$10, step, hi$11);
+        var scala$collection$immutable$Range$$lastElement$4$1 = ((lo$3 !== 0) ? ((end - lo$3) | 0) : ((end - step) | 0))
+      }
+    };
+    if ((!isEmpty$4$1)) {
+      var i$1 = 0;
+      while (true) {
+        var v1$1 = i$1;
+        var x = $imul(this.gridSize$1, player.x$1);
+        var y = $imul(this.gridSize$1, player.y$1);
+        var endX = (x + ($uD($g.Math.sin(v1)) * v1$1));
+        var endY = (y + ($uD($g.Math.cos(v1)) * v1$1));
+        var x$1 = (endX / this.gridSize$1);
+        var this$20 = $m_sjsr_RuntimeLong$();
+        var value$1 = $uD($g.Math.round(x$1));
+        var lo$4 = this$20.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$1);
+        var mapX = lo$4;
+        var x$2 = (endY / this.gridSize$1);
+        var this$23 = $m_sjsr_RuntimeLong$();
+        var value$2 = $uD($g.Math.round(x$2));
+        var lo$5 = this$23.scala$scalajs$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$2);
+        var mapY = lo$5;
+        if ((mapX < 0)) {
+          mapX = 0
+        };
+        if ((mapY < 0)) {
+          mapY = 0
+        };
+        if ((mapX > (((-1) + elem$1) | 0))) {
+          mapX = (((-1) + elem$1) | 0)
+        };
+        if ((mapY > (((-1) + mapHeight) | 0))) {
+          mapY = (((-1) + mapHeight) | 0)
+        };
+        if (this.impassableBlocks$1.contains__O__Z($as_sc_SeqLike(map.apply__I__O(mapY)).apply__I__O(mapX))) {
+          elem$1$1 = true
+        } else if (elem$1$1) {
+          ctx.rect($imul(mapX, this.gridSize$1), $imul(mapY, this.gridSize$1), this.gridSize$1, this.gridSize$1)
+        };
+        if ((i$1 === scala$collection$immutable$Range$$lastElement$4$1)) {
+          break
+        };
+        i$1 = ((i$1 + step) | 0)
+      }
+    };
+    if ((i === 359)) {
+      break
+    };
+    i = ((1 + i) | 0)
+  };
+  ctx.fill()
+});
+$c_Lgame_WarFog.prototype.init___I__sc_Seq = (function(gridSize, impassableBlocks) {
+  this.gridSize$1 = gridSize;
+  this.impassableBlocks$1 = impassableBlocks;
+  return this
+});
+var $d_Lgame_WarFog = new $TypeData().initClass({
+  Lgame_WarFog: 0
+}, false, "game.WarFog", {
+  Lgame_WarFog: 1,
+  O: 1
+});
+$c_Lgame_WarFog.prototype.$classData = $d_Lgame_WarFog;
 /** @constructor */
 function $c_Lgame_main$() {
   $c_O.call(this)
@@ -1922,6 +2179,18 @@ function $h_scg_GenericCompanion() {
   /*<skip>*/
 }
 $h_scg_GenericCompanion.prototype = $c_scg_GenericCompanion.prototype;
+$c_scg_GenericCompanion.prototype.apply__sc_Seq__sc_GenTraversable = (function(elems) {
+  if (elems.isEmpty__Z()) {
+    return this.empty__sc_GenTraversable()
+  } else {
+    var b = this.newBuilder__scm_Builder();
+    b.$$plus$plus$eq__sc_TraversableOnce__scg_Growable(elems);
+    return $as_sc_GenTraversable(b.result__O())
+  }
+});
+$c_scg_GenericCompanion.prototype.empty__sc_GenTraversable = (function() {
+  return $as_sc_GenTraversable(this.newBuilder__scm_Builder().result__O())
+});
 function $f_scg_Growable__loop$1__pscg_Growable__sc_LinearSeq__V($thiz, xs) {
   _loop: while (true) {
     var this$1 = xs;
@@ -2718,6 +2987,10 @@ function $h_scg_GenTraversableFactory$GenericCanBuildFrom() {
   /*<skip>*/
 }
 $h_scg_GenTraversableFactory$GenericCanBuildFrom.prototype = $c_scg_GenTraversableFactory$GenericCanBuildFrom.prototype;
+$c_scg_GenTraversableFactory$GenericCanBuildFrom.prototype.apply__O__scm_Builder = (function(from) {
+  var from$1 = $as_sc_GenTraversable(from);
+  return from$1.companion__scg_GenericCompanion().newBuilder__scm_Builder()
+});
 $c_scg_GenTraversableFactory$GenericCanBuildFrom.prototype.init___scg_GenTraversableFactory = (function($$outer) {
   if (($$outer === null)) {
     throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
@@ -4197,6 +4470,18 @@ function $f_sc_GenSeqLike__equals__O__Z($thiz, that) {
     return false
   }
 }
+function $is_sc_GenTraversable(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_GenTraversable)))
+}
+function $as_sc_GenTraversable(obj) {
+  return (($is_sc_GenTraversable(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.collection.GenTraversable"))
+}
+function $isArrayOf_sc_GenTraversable(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.sc_GenTraversable)))
+}
+function $asArrayOf_sc_GenTraversable(obj, depth) {
+  return (($isArrayOf_sc_GenTraversable(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.collection.GenTraversable;", depth))
+}
 /** @constructor */
 function $c_sc_Iterator$$anon$2() {
   $c_sc_AbstractIterator.call(this)
@@ -4349,6 +4634,20 @@ function $f_sc_TraversableLike__isPartLikelySynthetic$1__psc_TraversableLike__T_
 }
 function $f_sc_TraversableLike__toString__T($thiz) {
   return $thiz.mkString__T__T__T__T(($thiz.stringPrefix__T() + "("), ", ", ")")
+}
+function $f_sc_TraversableLike__builder$1__psc_TraversableLike__scg_CanBuildFrom__scm_Builder($thiz, bf$1) {
+  var b = bf$1.apply__O__scm_Builder($thiz.repr__O());
+  $f_scm_Builder__sizeHint__sc_TraversableLike__V(b, $thiz);
+  return b
+}
+function $f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O($thiz, f, bf) {
+  var b = $f_sc_TraversableLike__builder$1__psc_TraversableLike__scg_CanBuildFrom__scm_Builder($thiz, bf);
+  $thiz.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, f$1, b$1) {
+    return (function(x$2) {
+      return b$1.$$plus$eq__O__scm_Builder(f$1.apply__O__O(x$2))
+    })
+  })($thiz, f, b)));
+  return b.result__O()
 }
 function $f_sc_TraversableLike__stringPrefix__T($thiz) {
   var this$1 = $thiz.repr__O();
@@ -4503,6 +4802,83 @@ var $d_sjsr_UndefinedBehaviorError = new $TypeData().initClass({
   s_util_control_NoStackTrace: 1
 });
 $c_sjsr_UndefinedBehaviorError.prototype.$classData = $d_sjsr_UndefinedBehaviorError;
+/** @constructor */
+function $c_sc_Seq$() {
+  $c_scg_SeqFactory.call(this)
+}
+$c_sc_Seq$.prototype = new $h_scg_SeqFactory();
+$c_sc_Seq$.prototype.constructor = $c_sc_Seq$;
+/** @constructor */
+function $h_sc_Seq$() {
+  /*<skip>*/
+}
+$h_sc_Seq$.prototype = $c_sc_Seq$.prototype;
+$c_sc_Seq$.prototype.init___ = (function() {
+  $c_scg_GenTraversableFactory.prototype.init___.call(this);
+  return this
+});
+$c_sc_Seq$.prototype.newBuilder__scm_Builder = (function() {
+  $m_sci_Seq$();
+  return new $c_scm_ListBuffer().init___()
+});
+var $d_sc_Seq$ = new $TypeData().initClass({
+  sc_Seq$: 0
+}, false, "scala.collection.Seq$", {
+  sc_Seq$: 1,
+  scg_SeqFactory: 1,
+  scg_GenSeqFactory: 1,
+  scg_GenTraversableFactory: 1,
+  scg_GenericCompanion: 1,
+  O: 1,
+  scg_TraversableFactory: 1,
+  scg_GenericSeqCompanion: 1
+});
+$c_sc_Seq$.prototype.$classData = $d_sc_Seq$;
+var $n_sc_Seq$ = (void 0);
+function $m_sc_Seq$() {
+  if ((!$n_sc_Seq$)) {
+    $n_sc_Seq$ = new $c_sc_Seq$().init___()
+  };
+  return $n_sc_Seq$
+}
+/** @constructor */
+function $c_sci_Seq$() {
+  $c_scg_SeqFactory.call(this)
+}
+$c_sci_Seq$.prototype = new $h_scg_SeqFactory();
+$c_sci_Seq$.prototype.constructor = $c_sci_Seq$;
+/** @constructor */
+function $h_sci_Seq$() {
+  /*<skip>*/
+}
+$h_sci_Seq$.prototype = $c_sci_Seq$.prototype;
+$c_sci_Seq$.prototype.init___ = (function() {
+  $c_scg_GenTraversableFactory.prototype.init___.call(this);
+  return this
+});
+$c_sci_Seq$.prototype.newBuilder__scm_Builder = (function() {
+  return new $c_scm_ListBuffer().init___()
+});
+var $d_sci_Seq$ = new $TypeData().initClass({
+  sci_Seq$: 0
+}, false, "scala.collection.immutable.Seq$", {
+  sci_Seq$: 1,
+  scg_SeqFactory: 1,
+  scg_GenSeqFactory: 1,
+  scg_GenTraversableFactory: 1,
+  scg_GenericCompanion: 1,
+  O: 1,
+  scg_TraversableFactory: 1,
+  scg_GenericSeqCompanion: 1
+});
+$c_sci_Seq$.prototype.$classData = $d_sci_Seq$;
+var $n_sci_Seq$ = (void 0);
+function $m_sci_Seq$() {
+  if ((!$n_sci_Seq$)) {
+    $n_sci_Seq$ = new $c_sci_Seq$().init___()
+  };
+  return $n_sci_Seq$
+}
 /** @constructor */
 function $c_scm_IndexedSeq$() {
   $c_scg_SeqFactory.call(this)
@@ -4753,6 +5129,9 @@ $c_sci_List$.prototype.init___ = (function() {
   this.partialNotApplied$5 = new $c_sci_List$$anon$1().init___();
   return this
 });
+$c_sci_List$.prototype.empty__sc_GenTraversable = (function() {
+  return $m_sci_Nil$()
+});
 $c_sci_List$.prototype.newBuilder__scm_Builder = (function() {
   return new $c_scm_ListBuffer().init___()
 });
@@ -4893,12 +5272,22 @@ $c_sc_AbstractTraversable.prototype.addString__scm_StringBuilder__T__T__T__scm_S
 $c_sc_AbstractTraversable.prototype.repr__O = (function() {
   return this
 });
+$c_sc_AbstractTraversable.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
+  return $f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O(this, f, bf)
+});
 $c_sc_AbstractTraversable.prototype.stringPrefix__T = (function() {
   return $f_sc_TraversableLike__stringPrefix__T(this)
 });
 $c_sc_AbstractTraversable.prototype.newBuilder__scm_Builder = (function() {
   return this.companion__scg_GenericCompanion().newBuilder__scm_Builder()
 });
+function $f_sc_SeqLike__contains__O__Z($thiz, elem) {
+  return $thiz.exists__F1__Z(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, elem$1) {
+    return (function(x$12$2) {
+      return $m_sr_BoxesRunTime$().equals__O__O__Z(x$12$2, elem$1)
+    })
+  })($thiz, elem)))
+}
 function $is_sc_SeqLike(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_SeqLike)))
 }
@@ -4935,6 +5324,9 @@ function $isArrayOf_sc_LinearSeqLike(obj, depth) {
 function $asArrayOf_sc_LinearSeqLike(obj, depth) {
   return (($isArrayOf_sc_LinearSeqLike(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.collection.LinearSeqLike;", depth))
 }
+function $f_sc_IndexedSeqOptimized__exists__F1__Z($thiz, p) {
+  return ($f_sc_IndexedSeqOptimized__prefixLengthImpl__psc_IndexedSeqOptimized__F1__Z__I($thiz, p, false) !== $thiz.length__I())
+}
 function $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z($thiz, that) {
   if ($is_sc_IndexedSeq(that)) {
     var x2 = $as_sc_IndexedSeq(that);
@@ -4954,6 +5346,13 @@ function $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z($thiz, that)
 }
 function $f_sc_IndexedSeqOptimized__isEmpty__Z($thiz) {
   return ($thiz.length__I() === 0)
+}
+function $f_sc_IndexedSeqOptimized__prefixLengthImpl__psc_IndexedSeqOptimized__F1__Z__I($thiz, p, expectTrue) {
+  var i = 0;
+  while (((i < $thiz.length__I()) && ($uZ(p.apply__O__O($thiz.apply__I__O(i))) === expectTrue))) {
+    i = ((1 + i) | 0)
+  };
+  return i
 }
 function $f_sc_IndexedSeqOptimized__foreach__F1__V($thiz, f) {
   var i = 0;
@@ -4975,6 +5374,16 @@ function $f_sc_IndexedSeqOptimized__copyToArray__O__I__I__V($thiz, xs, start, le
     i = ((1 + i) | 0);
     j = ((1 + j) | 0)
   }
+}
+function $f_sc_LinearSeqOptimized__exists__F1__Z($thiz, p) {
+  var these = $thiz;
+  while ((!these.isEmpty__Z())) {
+    if ($uZ(p.apply__O__O(these.head__O()))) {
+      return true
+    };
+    these = $as_sc_LinearSeqOptimized(these.tail__O())
+  };
+  return false
 }
 function $f_sc_LinearSeqOptimized__sameElements__sc_GenIterable__Z($thiz, that) {
   if ($is_sc_LinearSeq(that)) {
@@ -5043,6 +5452,18 @@ function $h_sc_AbstractIterable() {
   /*<skip>*/
 }
 $h_sc_AbstractIterable.prototype = $c_sc_AbstractIterable.prototype;
+function $is_sc_Seq(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_Seq)))
+}
+function $as_sc_Seq(obj) {
+  return (($is_sc_Seq(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.collection.Seq"))
+}
+function $isArrayOf_sc_Seq(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.sc_Seq)))
+}
+function $asArrayOf_sc_Seq(obj, depth) {
+  return (($isArrayOf_sc_Seq(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.collection.Seq;", depth))
+}
 function $is_sc_IndexedSeq(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sc_IndexedSeq)))
 }
@@ -5086,6 +5507,9 @@ $c_sc_AbstractSeq.prototype.toString__T = (function() {
 });
 $c_sc_AbstractSeq.prototype.size__I = (function() {
   return this.length__I()
+});
+$c_sc_AbstractSeq.prototype.contains__O__Z = (function(elem) {
+  return $f_sc_SeqLike__contains__O__Z(this, elem)
 });
 $c_sc_AbstractSeq.prototype.hashCode__I = (function() {
   return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this.seq__sc_Seq())
@@ -5183,12 +5607,18 @@ function $h_sci_List() {
   /*<skip>*/
 }
 $h_sci_List.prototype = $c_sci_List.prototype;
+$c_sci_List.prototype.apply__I__O = (function(n) {
+  return $f_sc_LinearSeqOptimized__apply__I__O(this, n)
+});
 $c_sci_List.prototype.sameElements__sc_GenIterable__Z = (function(that) {
   return $f_sc_LinearSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
 });
 $c_sci_List.prototype.apply__O__O = (function(v1) {
   var n = $uI(v1);
   return $f_sc_LinearSeqOptimized__apply__I__O(this, n)
+});
+$c_sci_List.prototype.exists__F1__Z = (function(p) {
+  return $f_sc_LinearSeqOptimized__exists__F1__Z(this, p)
 });
 $c_sci_List.prototype.thisCollection__sc_Traversable = (function() {
   return this
@@ -5226,8 +5656,32 @@ $c_sci_List.prototype.length__I = (function() {
 $c_sci_List.prototype.seq__sc_Seq = (function() {
   return this
 });
+$c_sci_List.prototype.contains__O__Z = (function(elem) {
+  return $f_sc_LinearSeqOptimized__contains__O__Z(this, elem)
+});
 $c_sci_List.prototype.hashCode__I = (function() {
   return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
+});
+$c_sci_List.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
+  if ((bf === $m_sci_List$().ReusableCBFInstance$2)) {
+    if ((this === $m_sci_Nil$())) {
+      return $m_sci_Nil$()
+    } else {
+      var h = new $c_sci_$colon$colon().init___O__sci_List(f.apply__O__O(this.head__O()), $m_sci_Nil$());
+      var t = h;
+      var rest = this.tail__sci_List();
+      while ((rest !== $m_sci_Nil$())) {
+        var nx = new $c_sci_$colon$colon().init___O__sci_List(f.apply__O__O(rest.head__O()), $m_sci_Nil$());
+        t.tl$5 = nx;
+        t = nx;
+        var this$1 = rest;
+        rest = this$1.tail__sci_List()
+      };
+      return h
+    }
+  } else {
+    return $f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O(this, f, bf)
+  }
 });
 $c_sci_List.prototype.stringPrefix__T = (function() {
   return "List"
@@ -5498,6 +5952,10 @@ $c_scm_ListBuffer.prototype.sameElements__sc_GenIterable__Z = (function(that) {
 $c_scm_ListBuffer.prototype.apply__O__O = (function(v1) {
   return this.apply__I__O($uI(v1))
 });
+$c_scm_ListBuffer.prototype.exists__F1__Z = (function(p) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return $f_sc_LinearSeqOptimized__exists__F1__Z(this$1, p)
+});
 $c_scm_ListBuffer.prototype.isEmpty__Z = (function() {
   return (this.len$6 === 0)
 });
@@ -5549,6 +6007,10 @@ $c_scm_ListBuffer.prototype.length__I = (function() {
 });
 $c_scm_ListBuffer.prototype.seq__sc_Seq = (function() {
   return this
+});
+$c_scm_ListBuffer.prototype.contains__O__Z = (function(elem) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return $f_sc_LinearSeqOptimized__contains__O__Z(this$1, elem)
 });
 $c_scm_ListBuffer.prototype.addString__scm_StringBuilder__T__T__T__scm_StringBuilder = (function(b, start, sep, end) {
   var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
@@ -5679,25 +6141,28 @@ function $h_scm_StringBuilder() {
   /*<skip>*/
 }
 $h_scm_StringBuilder.prototype = $c_scm_StringBuilder.prototype;
-$c_scm_StringBuilder.prototype.init___ = (function() {
-  $c_scm_StringBuilder.prototype.init___I__T.call(this, 16, "");
-  return this
-});
 $c_scm_StringBuilder.prototype.$$plus$eq__C__scm_StringBuilder = (function(x) {
   this.append__C__scm_StringBuilder(x);
+  return this
+});
+$c_scm_StringBuilder.prototype.init___ = (function() {
+  $c_scm_StringBuilder.prototype.init___I__T.call(this, 16, "");
   return this
 });
 $c_scm_StringBuilder.prototype.apply__I__O = (function(idx) {
   var c = this.underlying$5.charAt__I__C(idx);
   return new $c_jl_Character().init___C(c)
 });
+$c_scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
+});
 $c_scm_StringBuilder.prototype.apply__O__O = (function(v1) {
   var index = $uI(v1);
   var c = this.underlying$5.charAt__I__C(index);
   return new $c_jl_Character().init___C(c)
 });
-$c_scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
+$c_scm_StringBuilder.prototype.exists__F1__Z = (function(p) {
+  return $f_sc_IndexedSeqOptimized__exists__F1__Z(this, p)
 });
 $c_scm_StringBuilder.prototype.isEmpty__Z = (function() {
   return $f_sc_IndexedSeqOptimized__isEmpty__Z(this)
@@ -5714,11 +6179,11 @@ $c_scm_StringBuilder.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   };
   return this.$$plus$eq__C__scm_StringBuilder(jsx$1)
 });
-$c_scm_StringBuilder.prototype.toString__T = (function() {
-  return this.underlying$5.java$lang$StringBuilder$$content$f
-});
 $c_scm_StringBuilder.prototype.companion__scg_GenericCompanion = (function() {
   return $m_scm_IndexedSeq$()
+});
+$c_scm_StringBuilder.prototype.toString__T = (function() {
+  return this.underlying$5.java$lang$StringBuilder$$content$f
 });
 $c_scm_StringBuilder.prototype.foreach__F1__V = (function(f) {
   $f_sc_IndexedSeqOptimized__foreach__F1__V(this, f)
@@ -5740,11 +6205,11 @@ $c_scm_StringBuilder.prototype.init___I__T = (function(initCapacity, initValue) 
   $c_scm_StringBuilder.prototype.init___jl_StringBuilder.call(this, this$2);
   return this
 });
-$c_scm_StringBuilder.prototype.seq__sc_Seq = (function() {
-  return this
-});
 $c_scm_StringBuilder.prototype.length__I = (function() {
   return this.underlying$5.length__I()
+});
+$c_scm_StringBuilder.prototype.seq__sc_Seq = (function() {
+  return this
 });
 $c_scm_StringBuilder.prototype.sizeHintIfCheap__I = (function() {
   return this.underlying$5.length__I()
@@ -5768,14 +6233,14 @@ $c_scm_StringBuilder.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   };
   return this.$$plus$eq__C__scm_StringBuilder(jsx$1)
 });
-$c_scm_StringBuilder.prototype.hashCode__I = (function() {
-  return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
+$c_scm_StringBuilder.prototype.sizeHint__I__V = (function(size) {
+  /*<skip>*/
 });
 $c_scm_StringBuilder.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   $f_sc_IndexedSeqOptimized__copyToArray__O__I__I__V(this, xs, start, len)
 });
-$c_scm_StringBuilder.prototype.sizeHint__I__V = (function(size) {
-  /*<skip>*/
+$c_scm_StringBuilder.prototype.hashCode__I = (function() {
+  return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
 });
 $c_scm_StringBuilder.prototype.append__C__scm_StringBuilder = (function(x) {
   this.underlying$5.append__C__jl_StringBuilder(x);
@@ -5867,6 +6332,9 @@ $c_sjs_js_WrappedArray.prototype.apply__O__O = (function(v1) {
 });
 $c_sjs_js_WrappedArray.prototype.sameElements__sc_GenIterable__Z = (function(that) {
   return $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
+});
+$c_sjs_js_WrappedArray.prototype.exists__F1__Z = (function(p) {
+  return $f_sc_IndexedSeqOptimized__exists__F1__Z(this, p)
 });
 $c_sjs_js_WrappedArray.prototype.isEmpty__Z = (function() {
   return $f_sc_IndexedSeqOptimized__isEmpty__Z(this)
@@ -5989,10 +6457,6 @@ function $h_scm_ArrayBuffer() {
   /*<skip>*/
 }
 $h_scm_ArrayBuffer.prototype = $c_scm_ArrayBuffer.prototype;
-$c_scm_ArrayBuffer.prototype.init___ = (function() {
-  $c_scm_ArrayBuffer.prototype.init___I.call(this, 16);
-  return this
-});
 $c_scm_ArrayBuffer.prototype.$$plus$eq__O__scm_ArrayBuffer = (function(elem) {
   var n = ((1 + this.size0$6) | 0);
   $f_scm_ResizableArray__ensureSize__I__V(this, n);
@@ -6000,15 +6464,22 @@ $c_scm_ArrayBuffer.prototype.$$plus$eq__O__scm_ArrayBuffer = (function(elem) {
   this.size0$6 = ((1 + this.size0$6) | 0);
   return this
 });
+$c_scm_ArrayBuffer.prototype.init___ = (function() {
+  $c_scm_ArrayBuffer.prototype.init___I.call(this, 16);
+  return this
+});
 $c_scm_ArrayBuffer.prototype.apply__I__O = (function(idx) {
   return $f_scm_ResizableArray__apply__I__O(this, idx)
+});
+$c_scm_ArrayBuffer.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
 });
 $c_scm_ArrayBuffer.prototype.apply__O__O = (function(v1) {
   var idx = $uI(v1);
   return $f_scm_ResizableArray__apply__I__O(this, idx)
 });
-$c_scm_ArrayBuffer.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return $f_sc_IndexedSeqOptimized__sameElements__sc_GenIterable__Z(this, that)
+$c_scm_ArrayBuffer.prototype.exists__F1__Z = (function(p) {
+  return $f_sc_IndexedSeqOptimized__exists__F1__Z(this, p)
 });
 $c_scm_ArrayBuffer.prototype.isEmpty__Z = (function() {
   return $f_sc_IndexedSeqOptimized__isEmpty__Z(this)
@@ -6036,11 +6507,11 @@ $c_scm_ArrayBuffer.prototype.init___I = (function(initialSize) {
   $f_scm_ResizableArray__$$init$__V(this);
   return this
 });
-$c_scm_ArrayBuffer.prototype.seq__sc_Seq = (function() {
-  return this
-});
 $c_scm_ArrayBuffer.prototype.length__I = (function() {
   return this.size0$6
+});
+$c_scm_ArrayBuffer.prototype.seq__sc_Seq = (function() {
+  return this
 });
 $c_scm_ArrayBuffer.prototype.sizeHintIfCheap__I = (function() {
   return this.size0$6
@@ -6061,18 +6532,18 @@ $c_scm_ArrayBuffer.prototype.$$plus$plus$eq__sc_TraversableOnce__scm_ArrayBuffer
 $c_scm_ArrayBuffer.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   return this.$$plus$eq__O__scm_ArrayBuffer(elem)
 });
-$c_scm_ArrayBuffer.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
-  $f_scm_ResizableArray__copyToArray__O__I__I__V(this, xs, start, len)
-});
-$c_scm_ArrayBuffer.prototype.hashCode__I = (function() {
-  return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
-});
 $c_scm_ArrayBuffer.prototype.sizeHint__I__V = (function(len) {
   if (((len > this.size0$6) && (len >= 1))) {
     var newarray = $newArrayObject($d_O.getArrayOf(), [len]);
     $systemArraycopy(this.array$6, 0, newarray, 0, this.size0$6);
     this.array$6 = newarray
   }
+});
+$c_scm_ArrayBuffer.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
+  $f_scm_ResizableArray__copyToArray__O__I__I__V(this, xs, start, len)
+});
+$c_scm_ArrayBuffer.prototype.hashCode__I = (function() {
+  return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this)
 });
 $c_scm_ArrayBuffer.prototype.$$plus$plus$eq__sc_TraversableOnce__scg_Growable = (function(xs) {
   return this.$$plus$plus$eq__sc_TraversableOnce__scm_ArrayBuffer(xs)
