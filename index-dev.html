@@ -8,10 +8,52 @@
             margin: 0;
             overflow: hidden;
         }
+
+        .select-form {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #f9c667 0%,#f79621 100%);
+        }
+
+        .select-form-input-wrapper {
+            width: 200px;
+            height: 200px;
+            display: flex;
+        }
+
+        .select-form-input-wrapper input {
+            width: 200px;
+            border: 1px solid #868686;
+            background: #fffcf7;
+            height: 36px;
+            font-size: 30px;
+            padding-left: 5px;
+        }
+
+        .select-form-input-wrapper button {
+            width: 50px;
+            height: 40px;
+        }
+
+        .select-form-input-wrapper div {
+            font-size: 18px;
+            position: absolute;
+            margin-top: -20px;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Include Scala.js compiled code -->
+    <div id="root"></div>
     <script type="text/javascript" src="./target/scala-2.12/untitled-fastopt.js"></script>
 </body>
 </html>

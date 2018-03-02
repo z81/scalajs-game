@@ -4,8 +4,7 @@ import org.scalajs.dom.CanvasRenderingContext2D
 
 import scala.scalajs.js
 
-class Player(xPos: Int, yPos: Int, maxVisibleRadius: Int, name: String, texture: ImageRegion) {
-  //val Direactions = Map("Right" -> 0, "Left" -> 1)
+class Player(xPos: Int, yPos: Int, maxVisibleRadius: Int, name: String, skinName: String) {
   var x = xPos
   var y = yPos
   var hp = 100
@@ -14,6 +13,7 @@ class Player(xPos: Int, yPos: Int, maxVisibleRadius: Int, name: String, texture:
   var visibleRadius = maxVisibleRadius
   var username = name
   var direction = "right"
+  var texturePack: TexturePack = null
 
   js.timers.setInterval(100) {
     if (stamina < 100) {
@@ -22,12 +22,12 @@ class Player(xPos: Int, yPos: Int, maxVisibleRadius: Int, name: String, texture:
   }
 
   def move(cx: Int, cy: Int) {
-    if (stamina < 20) return
+    if (stamina < 5) return
 
     x += cx
     y += cy
 
-    stamina = Math.max(stamina - 20, 0)
+    stamina = Math.max(stamina - 5, 0)
   }
 
 
@@ -43,7 +43,7 @@ class Player(xPos: Int, yPos: Int, maxVisibleRadius: Int, name: String, texture:
 
 //    ctx.save
 //    ctx.scale(1, -1)
-    texture.draw(ctx, gridSize * x, gridSize * y)
+    texturePack.get(skinName).draw(ctx, gridSize * x, gridSize * y)
     //ctx.restore()
   }
 }

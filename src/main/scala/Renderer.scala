@@ -5,7 +5,7 @@ import scala.scalajs.js
 import org.scalajs.dom.ext.KeyCode
 import scala.math._
 
-class Renderer {
+class Renderer(players: List[Player]) {
   val gridSize = 16
 
   val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
@@ -16,50 +16,17 @@ class Renderer {
   canvas.height = window.innerHeight.toInt
   document.body.appendChild(canvas)
 
-
-  val mainTextures = new ImageMap("assets/images/pack1.png", gridSize)
-  val grass = mainTextures getTexture(3, 0)
-  val brick = mainTextures getTexture(6, 0)
-  val rock = mainTextures getTexture(5, 1)
-  val cursorHoverTexture = mainTextures getTexture(3, 42)
-  val playerTexture = mainTextures getTexture(0, 17)
-  val player2Texture = mainTextures getTexture(0, 18)
-
-  var player = new Player(
-    xPos = 5,
-    yPos = 5,
-    maxVisibleRadius = 70,
-    name = "Sawaxon",
-    texture = playerTexture
-  )
-
-  var players = List(player,  new Player(
-    xPos = 7,
-    yPos = 5,
-    maxVisibleRadius = 70,
-    name = "Gleb",
-    texture = player2Texture
-  ))
+  var texturePack = new TexturePack()
+  texturePack.addSource("main", "assets/images/pack1.png", gridSize)
+  texturePack.add("main", 6, 0)("forest")
+  texturePack.add("main", 3, 0)("grass")
+  texturePack.add("main", 5, 1)("rock")
+  texturePack.add("main", 0, 17)("player")
 
 
-//  val map = List(
-//    List(rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, brick, brick, grass, grass, grass, grass, grass, brick, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, brick, brick, grass, grass, grass, grass, brick, grass, grass, grass, brick, brick, brick, brick, brick, brick),
-//    List(rock, grass, grass, brick, grass, grass, brick, brick, brick, brick, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, brick, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, rock, rock, grass, grass, grass, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, grass, grass, grass, grass, rock, rock, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, grass, grass, grass, brick, grass, grass, grass, grass, grass, grass, grass, brick, grass, grass, grass, grass, brick),
-//    List(rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock, rock)
-//  )
+  players.foreach(_.texturePack = texturePack)
+
+
   val gameMap = new GameMap(List(
     List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
     List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
@@ -82,19 +49,15 @@ class Renderer {
     List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
     List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
     List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
-  ), Seq(
-    brick,
-    grass,
-    rock
-  ))
+  ), texturePack)
 
   val map = gameMap.texturedMap
   val mapHeight = map.size
   var mapWidth = map(0).size
 
-  val impassableBlocks = List(brick, rock)
+  val impassableBlocks = List(texturePack.get("forest"), texturePack.get("rock"))
   val warFog = new WarFog(gridSize, impassableBlocks)
-  var userUi = new UserBar(player, gameMap)
+  var userUi = new UserBar(players(0), gameMap)
 
   var mousePosX = 0
   var mousePosY = 0
@@ -109,15 +72,19 @@ class Renderer {
   }
 
 
-  def render() {
-    if (mainTextures.isReady) {
+  val menuGradient = ctx.createLinearGradient(0, 0, 300, 300)
+  menuGradient.addColorStop(0, "black")
+  menuGradient.addColorStop(1, "green")
+
+  Screens.add("game",  () => {
+    if (texturePack.packs("main").isReady) {
 
 
       var y = 0
       for (row <- map) {
         var x = 0
         for (texture <- row) {
-          if (texture != grass) grass.draw(ctx, gridSize * x, gridSize * y)
+          if (texture != texturePack.get("grass")) texturePack.get("grass").draw(ctx, gridSize * x, gridSize * y)
           texture.draw(ctx, gridSize * x, gridSize * y)
 
           x = x + 1
@@ -130,16 +97,37 @@ class Renderer {
       for(player <- players) {
         player.render(ctx, gridSize)
       }
-      warFog.render(ctx, player, map)
+      warFog.render(ctx, players(0), map)
 
       userUi.render(ctx, gridSize)
 
       //cursorHoverTexture.draw(ctx, mousePosX * gridSize, mousePosY * gridSize)
     }
+  })
+
+  Screens.add("selectName", () => {
+//    val width = 200
+//    val height = 30
+//    val x = mapWidth / 2 * gridSize - width
+//    val y = mapHeight / 2 * gridSize - height
+//
+//    ctx.fillStyle = menuGradient
+//    ctx.fillRect(0, 0, mapWidth * gridSize, mapHeight * gridSize)
+//
+//    ctx.fillStyle = "white"
+//    ctx.strokeStyle = "blue"
+//    ctx.fillRect(x, y, width, height)
+//    ctx.strokeRect(x, y, width, height)
+  })
+
+  Screens.selectScreen("game")
+
+  def render() {
+    Screens.render()
   }
 
   def isValidPlayerPosition(x: Int, y: Int): Boolean = {
-    !impassableBlocks.contains(map(player.y + y)(player.x + x))
+    !impassableBlocks.contains(map(players(0).y + y)(players(0).x + x))
   }
 
 
@@ -147,19 +135,19 @@ class Renderer {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
 
       if((e.keyCode == KeyCode.Left || e.keyCode ==  KeyCode.A) && isValidPlayerPosition(-1, 0)) {
-        player.move(-1, 0)
+        players(0).move(-1, 0)
       }
 
       if((e.keyCode == KeyCode.Right || e.keyCode ==  KeyCode.D) && isValidPlayerPosition(1, 0)) {
-        player.move(1, 0)
+        players(0).move(1, 0)
       }
 
       if((e.keyCode == KeyCode.Up || e.keyCode ==  KeyCode.W) && isValidPlayerPosition(0, -1)) {
-        player.move(0, -1)
+        players(0).move(0, -1)
       }
 
       if((e.keyCode == KeyCode.Down || e.keyCode ==  KeyCode.S) && isValidPlayerPosition(0, 1)) {
-        player.move(0, 1)
+        players(0).move(0, 1)
       }
     }, false)
 
