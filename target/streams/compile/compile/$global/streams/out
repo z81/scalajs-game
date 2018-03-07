@@ -1,7 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0m/home/z81/dev/scalajs-game/src/main/scala/TexturePack.scala:19:23: value ::= is not a member of scala.collection.mutable.ListBuffer[game.ImageRegion][0m
-[0m[[0m[31merror[0m] [0m[0m  Expression does not convert to assignment because:[0m
-[0m[[0m[31merror[0m] [0m[0m    value :: is not a member of scala.collection.mutable.ListBuffer[game.ImageRegion][0m
-[0m[[0m[31merror[0m] [0m[0m    expansion: TexturePack.this.texturesByIndex = TexturePack.this.texturesByIndex.<$colon$colon: error>(pack)[0m
-[0m[[0m[31merror[0m] [0m[0m      texturesByIndex ::= pack[0m
-[0m[[0m[31merror[0m] [0m[0m                      ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/z81/dev/scalajs-game/src/main/scala/Renderer.scala:87:11: not found: value player[0m
+[0m[[0m[31merror[0m] [0m[0m      if (player(0).isMonster) {[0m
+[0m[[0m[31merror[0m] [0m[0m          ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m

@@ -1,11 +1,14 @@
 package game
 
 import org.scalajs.dom._
+
 import scala.scalajs.js
 import org.scalajs.dom.ext.KeyCode
+
+import scala.collection.mutable.ListBuffer
 import scala.math._
 
-class Renderer(players: List[Player]) {
+class Renderer(players: ListBuffer[Player], _map: String) {
   val gridSize = 16
 
   val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
@@ -18,38 +21,27 @@ class Renderer(players: List[Player]) {
 
   var texturePack = new TexturePack()
   texturePack.addSource("main", "assets/images/pack1.png", gridSize)
-  texturePack.add("main", 6, 0)("forest")
   texturePack.add("main", 3, 0)("grass")
+  texturePack.add("main", 6, 0)("forest")
   texturePack.add("main", 5, 1)("rock")
-  texturePack.add("main", 0, 17)("player")
-
+  texturePack.add("main", 0, 35)("player0")
+  texturePack.add("main", 0, 36)("player1")
+  texturePack.add("main", 0, 37)("player2")
+  texturePack.add("main", 1, 35)("player3")
+  texturePack.add("main", 1, 36)("player4")
+  texturePack.add("main", 1, 37)("player5")
+  texturePack.add("main", 4, 35)("player6")
+  texturePack.add("main", 5, 35)("player7")
+  texturePack.add("main", 6, 35)("player8")
+  texturePack.add("main", 6, 36)("player9")
+  texturePack.add("main", 6, 2)("water")
+  texturePack.add("main", 5, 23)("monster")
+  texturePack.add("main", 0, 43)("die")
 
   players.foreach(_.texturePack = texturePack)
 
 
-  val gameMap = new GameMap(List(
-    List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2),
-    List(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
-  ), texturePack)
+  val gameMap = new GameMap(map = _map, pack = texturePack)
 
   val map = gameMap.texturedMap
   val mapHeight = map.size
@@ -65,16 +57,10 @@ class Renderer(players: List[Player]) {
 
   canvas.width = mapWidth * gridSize
   canvas.height = mapHeight * gridSize
-  initKeyboard()
 
   js.timers.setInterval(50) {
     render
   }
-
-
-  val menuGradient = ctx.createLinearGradient(0, 0, 300, 300)
-  menuGradient.addColorStop(0, "black")
-  menuGradient.addColorStop(1, "green")
 
   Screens.add("game",  () => {
     if (texturePack.packs("main").isReady) {
@@ -97,7 +83,9 @@ class Renderer(players: List[Player]) {
       for(player <- players) {
         player.render(ctx, gridSize)
       }
+
       warFog.render(ctx, players(0), map)
+
 
       userUi.render(ctx, gridSize)
 
@@ -124,42 +112,19 @@ class Renderer(players: List[Player]) {
 
   def render() {
     Screens.render()
+
+    var text = s"${players.filter(_.hp > 0).size - 1} выживших из ${players.size - 1}"
+    ctx.fillStyle = "black"
+    ctx.fillText(text, 99, 9)
+    ctx.fillText(text, 99, 11)
+    ctx.fillText(text, 101, 9)
+    ctx.fillText(text, 101, 11)
+    ctx.fillStyle = "white"
+    ctx.fillText(text, 100, 10)
   }
 
   def isValidPlayerPosition(x: Int, y: Int): Boolean = {
     !impassableBlocks.contains(map(players(0).y + y)(players(0).x + x))
   }
 
-
-  def initKeyboard(): Unit = {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-
-      if((e.keyCode == KeyCode.Left || e.keyCode ==  KeyCode.A) && isValidPlayerPosition(-1, 0)) {
-        players(0).move(-1, 0)
-      }
-
-      if((e.keyCode == KeyCode.Right || e.keyCode ==  KeyCode.D) && isValidPlayerPosition(1, 0)) {
-        players(0).move(1, 0)
-      }
-
-      if((e.keyCode == KeyCode.Up || e.keyCode ==  KeyCode.W) && isValidPlayerPosition(0, -1)) {
-        players(0).move(0, -1)
-      }
-
-      if((e.keyCode == KeyCode.Down || e.keyCode ==  KeyCode.S) && isValidPlayerPosition(0, 1)) {
-        players(0).move(0, 1)
-      }
-    }, false)
-
-
-    document.body.addEventListener("click", (e: MouseEvent) => {
-      var x = round(e.clientX / gridSize).toInt
-      var y = round(e.clientY / gridSize).toInt
-
-      if (abs(mousePosX - x) < 5 && abs(mousePosY - y) < 5) {
-        mousePosY = y
-        mousePosX = x
-      }
-    }, false)
-  }
 }
